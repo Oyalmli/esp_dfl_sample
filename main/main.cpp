@@ -3,7 +3,13 @@
 using namespace dfl;
 
 extern "C" void app_main(void) {
-    mod::take(100, gen::counter<int32_t>())
-    >>= pipe::transform([](int i){ return i + 1; })
-    >>= sink::printf("%d\n");
+  int64_t maxSeen = 0;
+
+  gen::range(0,100,1)
+  >>= pipe::filter(_greater_than(50))
+  >>= rdir::fork(
+    sink::max(maxSeen),
+    sink::printf("%d\n"));
+
+  printf("Max seen: %lld\n", maxSeen);
 }
